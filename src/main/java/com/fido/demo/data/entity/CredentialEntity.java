@@ -1,14 +1,12 @@
 package com.fido.demo.data.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
+import java.util.List;
 
 @Entity
 @Table(name = "CREDENTIALS")
@@ -27,8 +25,8 @@ public class CredentialEntity {
     @Column(name = "rp_id")
     private int rpId;
 
-    @Column(name = "credential_id")
-    private byte[] credentialId;
+    @Column(name = "authenticator_credential_id")
+    private byte[] authenticatorCredentialId;
 
     @Column(name = "public_key")
     private byte[] publicKey;

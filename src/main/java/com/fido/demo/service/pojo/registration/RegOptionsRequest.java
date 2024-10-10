@@ -1,4 +1,4 @@
-package com.fido.demo.service.pojo;
+package com.fido.demo.service.pojo.registration;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

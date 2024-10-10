@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface CredentialRepository extends JpaRepository<CredentialEntity, Integer> {
     CredentialEntity findById(int id);
     CredentialEntity findByUserId(int userId);
-    CredentialEntity findByRpAndUserId(int rpId, int userId);
+    CredentialEntity findByRpIdAndUserId(int rpId, int userId);
 }

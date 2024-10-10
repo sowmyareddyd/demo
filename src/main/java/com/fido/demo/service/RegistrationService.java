@@ -1,8 +1,11 @@
 package com.fido.demo.service;
+import com.fido.demo.service.pojo.registration.RegOptionsRequest;
+import com.fido.demo.service.pojo.registration.RegOptionsResponse;
+import com.fido.demo.service.pojo.registration.RegRequest;
+import com.fido.demo.service.pojo.registration.RegResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.fido.demo.service.pojo.*;
 
 @RestController
 @RequestMapping("/fido2")
@@ -15,7 +18,7 @@ class RegistrationService {
     }
 
     @PostMapping("/registration")
-    public RegistrationResponse createRegistration(RegistrationRequest request){
+    public RegResponse createRegistration(RegRequest request){
         return null;
     }
 }

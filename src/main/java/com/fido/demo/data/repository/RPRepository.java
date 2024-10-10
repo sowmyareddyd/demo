@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface RPRepository extends JpaRepository<RelyingPartyEntity, Long> {
     // Additional query methods can be defined here
     RelyingPartyEntity findById(int id);
-    RelyingPartyEntity findByRpId(int rpId);
+    RelyingPartyEntity findByRpId(String rpId);
 }

@@ -23,7 +23,7 @@ public class AuthenticatorEntity {
     private UUID aaguid;
 
     @Column(name = "credential_id")
-    private int credentialid;
+    private int credentialId;
 
     @Column(name = "device_type")
     private String deviceType;

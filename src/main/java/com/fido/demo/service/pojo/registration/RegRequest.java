@@ -1,5 +1,5 @@
-package com.fido.demo.service.pojo;
+package com.fido.demo.service.pojo.registration;
 
-public class RegistrationRequest{
+public class RegRequest{
 
 }
