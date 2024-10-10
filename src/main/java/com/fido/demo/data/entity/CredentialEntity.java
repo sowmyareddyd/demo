@@ -39,6 +39,14 @@ public class CredentialEntity {
     @Column(name = "attestation_format")
     private String attestationFormat;
 
+    @JoinColumn(name = "credential_id")
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<CredentialConfigEntity> configs;
+
+    @JoinColumn(name = "credential_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private AuthenticatorEntity authenticator;
+
     @Column(name = "created_at")
     private Time createdAt;
 
