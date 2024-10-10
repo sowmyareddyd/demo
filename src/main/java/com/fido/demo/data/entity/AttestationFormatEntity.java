@@ -5,14 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
 
 @Entity
 @Table(name = "ATTESTATION_FORMATS")
-@Data // Generates getters, setters, toString, etc. (Requires Lombok)
+//@Data // Generates getters, setters, toString, etc. (Requires Lombok)
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttestationFormatEntity {
@@ -31,4 +30,44 @@ public class AttestationFormatEntity {
 
     @Column(name = "updated_at")
     private Time updatedAt;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Time getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Time createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Time getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Time updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

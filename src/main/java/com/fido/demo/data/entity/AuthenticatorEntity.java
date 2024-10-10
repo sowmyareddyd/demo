@@ -1,8 +1,10 @@
 package com.fido.demo.data.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
@@ -10,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "AUTHENTICATORS")
-@Data
+//@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthenticatorEntity {
@@ -22,8 +24,8 @@ public class AuthenticatorEntity {
     @Column(name = "aaguid")
     private UUID aaguid;
 
-    @Column(name = "credentials_id")
-    private int credentialid;
+    @Column(name = "credential_id")
+    private int credentialId;
 
     @Column(name = "device_type")
     private String deviceType;
@@ -45,4 +47,84 @@ public class AuthenticatorEntity {
 
     @Column(name = "updated_at")
     private Time updatedAt;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public UUID getAaguid() {
+        return aaguid;
+    }
+
+    public void setAaguid(UUID aaguid) {
+        this.aaguid = aaguid;
+    }
+
+    public int getCredentialId() {
+        return credentialId;
+    }
+
+    public void setCredentialId(int credentialId) {
+        this.credentialId = credentialId;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public String getTransports() {
+        return transports;
+    }
+
+    public void setTransports(String transports) {
+        this.transports = transports;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getFirmwareVersion() {
+        return firmwareVersion;
+    }
+
+    public void setFirmwareVersion(String firmwareVersion) {
+        this.firmwareVersion = firmwareVersion;
+    }
+
+    public Time getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Time createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Time getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Time updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

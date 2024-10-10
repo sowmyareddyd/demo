@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CredentialRepository extends JpaRepository<CredentialEntity, Integer> {
-    
+public interface CredentialRepository extends JpaRepository<CredentialEntity, Integer> {
+    CredentialEntity findById(int id);
+    CredentialEntity findByUserId(int userId);
+    CredentialEntity findByRpIdAndUserId(int rpId, int userId);
 }
