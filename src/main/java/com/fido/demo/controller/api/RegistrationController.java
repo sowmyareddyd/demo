@@ -1,7 +1,6 @@
 package com.fido.demo.controller.api;
 
-import com.fido.demo.controller.pojo.registration.options.RegOptionsRequest;
-import com.fido.demo.controller.pojo.registration.options.RegOptionsResponse;
+import com.fido.demo.controller.pojo.registration.options.RegOptions;
 import com.fido.demo.controller.pojo.registration.RegRequest;
 import com.fido.demo.controller.pojo.registration.RegResponse;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ public interface RegistrationController {
     
     // Get challenge options for registration
     @PostMapping(value = "/registration/options", consumes = "application/json")
-    public ResponseEntity<RegOptionsResponse> getRegOptions(@RequestBody RegOptionsRequest request) ;
+    public ResponseEntity<RegOptions> getRegOptions(@RequestBody RegOptions request) ;
 
     @PostMapping("/registration")
     public ResponseEntity<RegResponse> createRegistration(@RequestBody RegRequest request);

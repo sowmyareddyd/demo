@@ -1,17 +1,15 @@
 package com.fido.demo.controller.service;
 
-import com.fido.demo.controller.pojo.registration.options.RegOptionsRequest;
-import com.fido.demo.controller.pojo.registration.options.RegOptionsResponse;
+import com.fido.demo.controller.pojo.registration.options.RegOptions;
 import com.fido.demo.controller.pojo.registration.RegRequest;
 import com.fido.demo.controller.pojo.registration.RegResponse;
 import com.fido.demo.controller.service.pojo.SessionState;
 import com.fido.demo.data.entity.CredentialEntity;
-import com.fido.demo.data.entity.RelyingPartyConfigEntity;
 import com.fido.demo.data.entity.RelyingPartyEntity;
 import com.fido.demo.data.redis.RedisService;
 import com.fido.demo.data.repository.RPRepository;
 import com.fido.demo.util.CredUtils;
-import com.fido.demo.util.Crypto;
+import com.fido.demo.util.CryptoUtil;
 import com.fido.demo.util.RpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -22,7 +20,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-import static com.fido.demo.controller.pojo.registration.options.RegOptionsResponse.PubKeyCredParam;
+import static com.fido.demo.controller.pojo.registration.options.RegOptions.PubKeyCredParam;
 
 @Service("registrationService")
 public class RegistrationService {
@@ -40,36 +38,25 @@ public class RegistrationService {
     private CredUtils credUtils;
 
     @Autowired
-    Crypto crypto;
+    CryptoUtil cryptoUtil;
 
-    public RegOptionsResponse getRegOptions(RegOptionsRequest request){
-        RegOptionsResponse response = new RegOptionsResponse();
+    public RegOptions getRegOptions(RegOptions request){
         // construct the response
 
-        //generate the session id
-        String sessionId = crypto.generateSecureRandomString(32);
-        response.setSessionId(sessionId);
+        //session_id : secure random string
+        String sessionId = cryptoUtil.generateSecureRandomString(32);
 
         RelyingPartyEntity relyingPartyEntity = rpRepository.findByRpId(request.getRp().getId());
         if(relyingPartyEntity == null){
             throw new ResourceNotFoundException("RP not found");
         }
-        List<RelyingPartyConfigEntity> rpConfigs = relyingPartyEntity.getConfigs();
+
+
+        String attestation = rpUtils.getAttestation(relyingPartyEntity.getConfigs());
         List<PubKeyCredParam> pubKeyCredParam = rpUtils.getPubKeyCredParam(relyingPartyEntity.getConfigs());
-
-        response.setPubKeyCredParams(pubKeyCredParam); // pubKeyCredParam
-
-        response.setRp(request.getRp()); // rp
-
-        response.setUser(request.getUser());// user
-
-
-        response.setAuthenticatorSelection(request.getAuthenticatorSelection());// authenticator selection
-
         long timeout = rpUtils.getTimeout(relyingPartyEntity.getConfigs());
-        response.setTimeout(timeout);// timeout
 
-        String challenge = UUID.randomUUID().toString();// challenge
+        String challenge = cryptoUtil.generateSecureRandomString(32);// challenge
         String challengeBase64 = Base64.getEncoder().encodeToString(challenge.getBytes());
         SessionState state = SessionState.builder()
                 .sessionId(sessionId)
@@ -81,12 +68,19 @@ public class RegistrationService {
                 .build();
 
         redisService.save(sessionId, state); // save the state for subsequent call
-        response.setChallenge(challengeBase64);
 
-        response.setExcludeCredentials(new ArrayList<>());// exclude credentials
+        RegOptions response = RegOptions.builder() // build the response
+                .rp(request.getRp())
+                .user(request.getUser())
+                .authenticatorSelection(request.getAuthenticatorSelection())
+                .attestation(attestation)
+                .challenge(challengeBase64)
+                .pubKeyCredParams(pubKeyCredParam)
+                .timeout(timeout)
+                .excludeCredentials(new ArrayList<>())
+                .sessionId(sessionId)
+                .build();
 
-        String attestation = rpUtils.getAttestation(relyingPartyEntity.getConfigs());
-        response.setAttestation(attestation);
         return  response;
     }
 

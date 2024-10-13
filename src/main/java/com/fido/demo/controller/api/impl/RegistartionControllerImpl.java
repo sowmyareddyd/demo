@@ -1,8 +1,7 @@
 package com.fido.demo.controller.api.impl;
 
 import com.fido.demo.controller.api.RegistrationController;
-import com.fido.demo.controller.pojo.registration.options.RegOptionsRequest;
-import com.fido.demo.controller.pojo.registration.options.RegOptionsResponse;
+import com.fido.demo.controller.pojo.registration.options.RegOptions;
 import com.fido.demo.controller.pojo.registration.RegRequest;
 import com.fido.demo.controller.pojo.registration.RegResponse;
 import com.fido.demo.controller.service.RegistrationService;
@@ -19,8 +18,8 @@ public class RegistartionControllerImpl implements RegistrationController {
     RegistrationService registrationService;
 
     @Override
-    public ResponseEntity<RegOptionsResponse> getRegOptions(RegOptionsRequest request) {
-        RegOptionsResponse regOptionsResponse = registrationService.getRegOptions(request);
+    public ResponseEntity<RegOptions> getRegOptions(RegOptions request) {
+        RegOptions regOptionsResponse = registrationService.getRegOptions(request);
         return ResponseEntity.ok(regOptionsResponse);
     }
 

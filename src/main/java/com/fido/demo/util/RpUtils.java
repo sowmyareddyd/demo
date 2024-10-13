@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fido.demo.controller.pojo.registration.options.RegOptionsResponse.PubKeyCredParam;
+import static com.fido.demo.controller.pojo.registration.options.RegOptions.PubKeyCredParam;
 
 @Component
 public class RpUtils {

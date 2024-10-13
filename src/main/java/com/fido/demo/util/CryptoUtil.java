@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 @Component
-public class Crypto {
+public class CryptoUtil {
 
     public String generateSecureRandomString(int length) {
         SecureRandom secureRandom = new SecureRandom();

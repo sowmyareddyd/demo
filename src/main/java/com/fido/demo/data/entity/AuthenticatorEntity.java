@@ -14,6 +14,14 @@ import java.util.UUID;
 @Table(name = "AUTHENTICATORS")
 //@Data
 @NoArgsConstructor
+
+
+
+
+
+
+
+
 @AllArgsConstructor
 public class AuthenticatorEntity {
 
