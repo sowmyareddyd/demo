@@ -1,5 +1,6 @@
 package com.fido.demo.controller.service;
 
+import com.fido.demo.controller.pojo.registration.options.AuthenticatorSelection;
 import com.fido.demo.controller.pojo.registration.options.RegOptions;
 import com.fido.demo.controller.pojo.registration.RegRequest;
 import com.fido.demo.controller.pojo.registration.RegResponse;
@@ -41,8 +42,6 @@ public class RegistrationService {
     CryptoUtil cryptoUtil;
 
     public RegOptions getRegOptions(RegOptions request){
-        // construct the response
-
         //session_id : secure random string
         String sessionId = cryptoUtil.generateSecureRandomString(32);
 
@@ -51,14 +50,14 @@ public class RegistrationService {
             throw new ResourceNotFoundException("RP not found");
         }
 
-
+        AuthenticatorSelection authenticatorSelection = rpUtils.getAuthenticatorSelection(relyingPartyEntity.getConfigs());
         String attestation = rpUtils.getAttestation(relyingPartyEntity.getConfigs());
         List<PubKeyCredParam> pubKeyCredParam = rpUtils.getPubKeyCredParam(relyingPartyEntity.getConfigs());
         long timeout = rpUtils.getTimeout(relyingPartyEntity.getConfigs());
 
         String challenge = cryptoUtil.generateSecureRandomString(32);// challenge
         String challengeBase64 = Base64.getEncoder().encodeToString(challenge.getBytes());
-        SessionState state = SessionState.builder()
+        SessionState state = SessionState.builder() // ToDo : instead of saving the incoming data without validation, validate and persist
                 .sessionId(sessionId)
                 .rp(request.getRp())
                 .challenge(challengeBase64)
@@ -70,15 +69,15 @@ public class RegistrationService {
         redisService.save(sessionId, state); // save the state for subsequent call
 
         RegOptions response = RegOptions.builder() // build the response
-                .rp(request.getRp())
-                .user(request.getUser())
-                .authenticatorSelection(request.getAuthenticatorSelection())
-                .attestation(attestation)
-                .challenge(challengeBase64)
-                .pubKeyCredParams(pubKeyCredParam)
-                .timeout(timeout)
-                .excludeCredentials(new ArrayList<>())
-                .sessionId(sessionId)
+                .rp(request.getRp())                                                   /* relying party*/
+                .user(request.getUser())                                               /* user */
+                .authenticatorSelection(authenticatorSelection)                        /* authenticator selection */
+                .attestation(attestation)                                              /* attestation */
+                .challenge(challengeBase64)                                            /* challenge */
+                .pubKeyCredParams(pubKeyCredParam)                                     /* pubKeyCredParams */
+                .timeout(timeout)                                                      /* timeout */
+                .excludeCredentials(new ArrayList<>())                                 /* excludeCredentials : ToDo - parse from Db and set the value */
+                .sessionId(sessionId)                                                  /* sessionId */
                 .build();
 
         return  response;

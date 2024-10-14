@@ -1,5 +1,6 @@
 package com.fido.demo.util;
 
+import com.fido.demo.controller.pojo.registration.options.AuthenticatorSelection;
 import com.fido.demo.data.entity.RelyingPartyConfigEntity;
 import org.springframework.stereotype.Component;
 
@@ -58,5 +59,32 @@ public class RpUtils {
             return "none";
         }
         return attestation.getSettingValue();
+    }
+
+    public AuthenticatorSelection getAuthenticatorSelection(List<RelyingPartyConfigEntity> rpConfigs){
+        /*
+        * setting_name
+        * require_user_verification
+        * authenticator_attachment
+        * require_resident_key
+        * */
+        RelyingPartyConfigEntity userVerificationConfig = rpConfigs.stream()
+                                                    .filter(rpConfig -> rpConfig.getSettingKey().equals("require_user_verification"))
+                                                    .findFirst().orElse(null);
+
+        RelyingPartyConfigEntity requireResidentKey = rpConfigs.stream()
+                                                    .filter(rpConfig -> rpConfig.getSettingKey().equals("require_resident_key"))
+                                                    .findFirst().orElse(null);
+
+        RelyingPartyConfigEntity authenticatorAttachment = rpConfigs.stream()
+                                                    .filter(rpConfig -> rpConfig.getSettingKey().equals("authenticator_attachment"))
+                                                    .findFirst().orElse(null);
+
+        AuthenticatorSelection authenticatorSelection = new AuthenticatorSelection();
+        authenticatorSelection.setUserVerification(userVerificationConfig == null ? "preferred" : userVerificationConfig.getSettingValue()); // ToDo : move to constants
+        authenticatorSelection.setRequireResidentKey(requireResidentKey == null ? false : Boolean.valueOf(requireResidentKey.getSettingValue()));
+        authenticatorSelection.setAuthenticatorAttachment(authenticatorAttachment == null ? "platform" : authenticatorAttachment.getSettingValue()); // ToDo : reconsider the default value and move to constants
+
+        return authenticatorSelection;
     }
 }
