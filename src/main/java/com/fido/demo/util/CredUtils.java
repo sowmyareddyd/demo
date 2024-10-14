@@ -24,34 +24,55 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class CredUtils {
 
-    public CredentialEntity getCredentialEntity(RegRequest request, SessionState session) {
+    public CredentialEntity getCredentialEntity(RegRequest request, SessionState session, RegistrationData registrationData) {
         // id, user_id, rp_id, public_key(UUID), sign_count, transports, attestation_format, authenticator_credential_id
         //id is auto generated
-        CredentialEntity credentialEntity = new CredentialEntity();
 
         // rp_id
-        String rpId = request.getRpId();
+        String rpId = session.getRp().getId();
+
+        // user_id
+        String userId = session.getUser().getId();
 
         // public_key
-        String publicKey = this.getPubKey(request);
+        byte[] publicKey = this.getPubKey(request).getBytes();
 
         // signCount
-        BigInteger signCount = new BigInteger(String.valueOf(10));
+        long signCount = this.getSignCount(registrationData);
 
         // transports
-        String transports = this.getTransports(request);
+        String transports = registrationData.getTransports().stream().map(transport -> transport.getValue()).collect(Collectors.joining(",")); // ToDo : handle multiple transports
 
-        RegistrationData registrationData = this.validateAndGetRegData(request, session);
+        // ToDo : for now only attestation_none cases are handled => below hard coded value
+        String attestationFormat = "none";
+
+        // authenticator_credential_id
+        byte[] authneticatorCredentialId = registrationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData().getCredentialId(); //ToDo : avoid byte to string conversion ?
+
+        CredentialEntity credentialEntity = CredentialEntity.builder()
+                .rpId(Integer.valueOf(rpId))                /* Column : rp_id */
+                .userId(Integer.valueOf(userId))            /* Column : user_id */
+                .publicKey(publicKey)            /* Column : public_key */
+                .sign_count(signCount)                      /* Column : sign_count */
+                .attestationFormat(attestationFormat)       /* Column : attestation_format */
+                .authenticatorCredentialId(authneticatorCredentialId)
+                .build();
+
 
         CredentialEntity credential = new CredentialEntity();
 
         return  credential;
     }
 
+    private long getSignCount(RegistrationData registrationData) {
+        long signCount = registrationData.getAttestationObject().getAuthenticatorData().getSignCount(); //ToDo : use null checks, regData is returned by WebAuthn4J lib so might not need null checks
+        return  signCount;
+    }
     private String getPubKey(RegRequest request) {
         RegRequest.ServerPublicKeyCredential serverPublicKeyCredential = request.getServerPublicKeyCredential();
         String publicKey = serverPublicKeyCredential.getResponse().getPublicKey();
@@ -65,7 +86,7 @@ public class CredUtils {
     }
 
 
-    private RegistrationData validateAndGetRegData(RegRequest request, SessionState sessionState){
+    public RegistrationData validateAndGetRegData(RegRequest request, SessionState sessionState){
 
         WebAuthnRegistrationManager webAuthnManager = WebAuthnRegistrationManager.createNonStrictWebAuthnRegistrationManager();
         RegRequest.Response clientResponse = request.getServerPublicKeyCredential().getResponse();

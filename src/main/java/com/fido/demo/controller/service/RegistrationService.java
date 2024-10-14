@@ -12,6 +12,7 @@ import com.fido.demo.data.repository.RPRepository;
 import com.fido.demo.util.CredUtils;
 import com.fido.demo.util.CryptoUtil;
 import com.fido.demo.util.RpUtils;
+import com.webauthn4j.data.RegistrationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -83,11 +84,15 @@ public class RegistrationService {
         return  response;
     }
 
-    public RegResponse getReg(RegRequest request){
+    public RegRequest getReg(RegRequest request){
         // fetch the session State
         SessionState session = (SessionState) redisService.find(request.getSessionId());
 
-        CredentialEntity credentialEntity = credUtils.getCredentialEntity(request, session);
+
+        // validate session and extract registrationData
+        RegistrationData registrationData = credUtils.validateAndGetRegData(request, session);
+
+        CredentialEntity credentialEntity = credUtils.getCredentialEntity(request, session, registrationData);
         return null;
     }
 

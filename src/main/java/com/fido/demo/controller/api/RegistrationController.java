@@ -19,5 +19,5 @@ public interface RegistrationController {
     public ResponseEntity<RegOptions> getRegOptions(@RequestBody RegOptions request) ;
 
     @PostMapping("/registration")
-    public ResponseEntity<RegResponse> createRegistration(@RequestBody RegRequest request);
+    public ResponseEntity<RegRequest> createRegistration(@RequestBody RegRequest request);
 }
