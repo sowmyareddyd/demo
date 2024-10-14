@@ -24,8 +24,8 @@ public class RegistartionControllerImpl implements RegistrationController {
     }
 
     @Override
-    public ResponseEntity<RegResponse> createRegistration(RegRequest request) {
-        RegResponse regResponse = registrationService.getReg(request);
+    public ResponseEntity<RegRequest> createRegistration(RegRequest request) {
+        RegRequest regResponse = registrationService.getReg(request);
         return ResponseEntity.ok(regResponse);
     }
 }

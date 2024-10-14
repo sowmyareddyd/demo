@@ -5,13 +5,16 @@ import com.fido.demo.controller.pojo.registration.options.RegOptions;
 import com.fido.demo.controller.pojo.registration.RegRequest;
 import com.fido.demo.controller.pojo.registration.RegResponse;
 import com.fido.demo.controller.service.pojo.SessionState;
+import com.fido.demo.data.entity.AuthenticatorEntity;
 import com.fido.demo.data.entity.CredentialEntity;
 import com.fido.demo.data.entity.RelyingPartyEntity;
 import com.fido.demo.data.redis.RedisService;
 import com.fido.demo.data.repository.RPRepository;
+import com.fido.demo.data.repository.CredentialRepository;
 import com.fido.demo.util.CredUtils;
 import com.fido.demo.util.CryptoUtil;
 import com.fido.demo.util.RpUtils;
+import com.webauthn4j.data.RegistrationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,9 @@ public class RegistrationService {
 
     @Autowired
     RPRepository rpRepository;
+
+    @Autowired
+    CredentialRepository credRepository;
 
     @Autowired
     private RpUtils rpUtils;
@@ -60,6 +66,7 @@ public class RegistrationService {
         SessionState state = SessionState.builder() // ToDo : instead of saving the incoming data without validation, validate and persist
                 .sessionId(sessionId)
                 .rp(request.getRp())
+                .rpDbId(relyingPartyEntity.getId())
                 .challenge(challengeBase64)
                 .user(request.getUser())
                 .authenticatorSelection(request.getAuthenticatorSelection())
@@ -83,12 +90,26 @@ public class RegistrationService {
         return  response;
     }
 
-    public RegResponse getReg(RegRequest request){
+    public RegRequest getReg(RegRequest request){
         // fetch the session State
         SessionState session = (SessionState) redisService.find(request.getSessionId());
 
-        CredentialEntity credentialEntity = credUtils.getCredentialEntity(request, session);
-        return null;
+
+        // validate session and extract registrationData
+        RegistrationData registrationData = credUtils.validateAndGetRegData(request, session);
+
+        CredentialEntity credentialEntity = credUtils.getCredentialEntity(request, session, registrationData);
+        AuthenticatorEntity authenticatorEntity = credUtils.getAuthenticatorEntity(request, registrationData);
+        credentialEntity.setAuthenticator(authenticatorEntity);
+
+        // persist the credentials
+        CredentialEntity savedCreds = credRepository.save(credentialEntity);
+
+
+        // construct the response and return
+        RegRequest response = credUtils.getRegistrationResponse(savedCreds);
+
+        return response;
     }
 
 }

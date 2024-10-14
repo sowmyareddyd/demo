@@ -1,27 +1,19 @@
 package com.fido.demo.data.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Data;
+import lombok.Builder;
 
 import java.sql.Time;
 import java.util.UUID;
 
 @Entity
 @Table(name = "AUTHENTICATORS")
-//@Data
+@Data
+@Builder
 @NoArgsConstructor
-
-
-
-
-
-
-
-
 @AllArgsConstructor
 public class AuthenticatorEntity {
 
@@ -31,9 +23,6 @@ public class AuthenticatorEntity {
 
     @Column(name = "aaguid")
     private UUID aaguid;
-
-    @Column(name = "credential_id")
-    private int credentialId;
 
     @Column(name = "device_type")
     private String deviceType;
@@ -56,6 +45,11 @@ public class AuthenticatorEntity {
     @Column(name = "updated_at")
     private Time updatedAt;
 
+
+    @JoinColumn(name = "credential_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private CredentialEntity credential;
+
     public int getId() {
         return id;
     }
@@ -70,14 +64,6 @@ public class AuthenticatorEntity {
 
     public void setAaguid(UUID aaguid) {
         this.aaguid = aaguid;
-    }
-
-    public int getCredentialId() {
-        return credentialId;
-    }
-
-    public void setCredentialId(int credentialId) {
-        this.credentialId = credentialId;
     }
 
     public String getDeviceType() {

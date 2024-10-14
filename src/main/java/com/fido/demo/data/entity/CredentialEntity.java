@@ -43,8 +43,7 @@ public class CredentialEntity {
     @OneToMany(fetch = FetchType.LAZY)
     private List<CredentialConfigEntity> configs;
 
-    @JoinColumn(name = "credential_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(mappedBy= "credential" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private AuthenticatorEntity authenticator;
 
     @Column(name = "created_at")

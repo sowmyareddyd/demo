@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class RegRequest {
 
+    /*----------------- Request fields (begin) -----------------------------*/
     @JsonProperty("serverPublicKeyCredential")
     private ServerPublicKeyCredential serverPublicKeyCredential;
 
@@ -26,6 +27,27 @@ public class RegRequest {
 
     @JsonProperty("tokenBinding")
     private String tokenBinding;
+    /*----------------- Request fields (end) -----------------------------*/
+
+    /*----------------- Response fields (being) -----------------------------*/
+    @JsonProperty("aaguid")
+    private String aaguid;
+
+    @JsonProperty("credentialId")
+    private String credentialId;
+
+    @JsonProperty("attestationType")
+    private String attestationType;
+
+    @JsonProperty("authenticatorTransports")
+    private List<String> authenticatorTransports;
+
+    @JsonProperty("userVerified")
+    private boolean userVerified;
+
+    @JsonProperty("rk") // resident key or not
+    private boolean rk;
+
 
     // Getters and Setters
     public ServerPublicKeyCredential getServerPublicKeyCredential() {
