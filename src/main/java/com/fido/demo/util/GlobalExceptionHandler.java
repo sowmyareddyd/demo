@@ -11,16 +11,25 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @Autowired
+    private Environment environment;
+
+
     // Handle specific exceptions
     @ExceptionHandler(ResourceNotFoundException.class)
     public final ResponseEntity<ApiError> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         ApiError error = new ApiError(HttpStatus.NOT_FOUND, "Resource Not Found", details);
@@ -30,8 +39,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // Handle generic exceptions
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ApiError> handleAllExceptions(Exception ex, WebRequest request) {
+
         List<String> details = new ArrayList<>();
-        details.add(ex.getLocalizedMessage());
+        details.add(ex.getMessage());
+
+
         ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error", details);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }

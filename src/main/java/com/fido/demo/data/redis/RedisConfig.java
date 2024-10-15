@@ -2,6 +2,7 @@ package com.fido.demo.data.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fido.demo.controller.service.pojo.SessionState;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 
 @Configuration
 class RedisConfig {
+
 
     @Bean
     public RedisTemplate<String, SessionState> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
