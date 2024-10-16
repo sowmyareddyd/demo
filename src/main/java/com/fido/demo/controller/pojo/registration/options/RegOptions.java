@@ -2,14 +2,14 @@ package com.fido.demo.controller.pojo.registration.options;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fido.demo.controller.pojo.PubKeyCredParam;
 import com.fido.demo.controller.pojo.registration.RP;
 import com.fido.demo.controller.pojo.registration.User;
 import lombok.*;
 
 import java.util.List;
 
-
-@Data // for getters and setters
+@Data
 @Builder
 public class RegOptions {
 
@@ -38,7 +38,7 @@ public class RegOptions {
     @JsonProperty("timeout")
     private long timeout;
 
-    @JsonProperty("excludeCredentials")
+    @JsonProperty("excludeCredentials") //ToDo : define a type here
     private List<Object> excludeCredentials;
 
     @JsonProperty("sessionId")
@@ -99,30 +99,6 @@ public class RegOptions {
         }
     }
 
-    public static class PubKeyCredParam {
-
-        @JsonProperty("type")
-        private String type;
-
-        @JsonProperty("alg")
-        private int alg;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public int getAlg() {
-            return alg;
-        }
-
-        public void setAlg(int alg) {
-            this.alg = alg;
-        }
-    }
 
     public static class Extensions {
 

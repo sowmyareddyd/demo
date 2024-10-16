@@ -43,7 +43,7 @@ public class AuthenticationService {
         RelyingPartyEntity rpEntity = rpRepository.findByRpId(rpId);
 
         // fetch user
-        UserEntity userEntity = userRepository.findById(1);
+        UserEntity userEntity = userRepository.findByUserId(request.getUserId());
         // save session (challenge, user, rp, sessionId)
         SessionState state = sessionUtils.getAutnSession(request, rpEntity, userEntity);
 

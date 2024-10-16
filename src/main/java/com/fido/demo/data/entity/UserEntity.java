@@ -4,18 +4,28 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "USERS")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity {
 
     @Id
     @Column(name = "id")
-    private int id;
+    private BigInteger id;
+
+    @Column(name = "external_id", unique = true)
+    private String userId;
 
     @Column(name = "username")
     private String username;

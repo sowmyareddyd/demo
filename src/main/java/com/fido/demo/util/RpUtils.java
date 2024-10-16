@@ -1,13 +1,14 @@
 package com.fido.demo.util;
 
 import com.fido.demo.controller.pojo.registration.options.AuthenticatorSelection;
+import com.fido.demo.controller.pojo.PubKeyCredParam;
 import com.fido.demo.data.entity.RelyingPartyConfigEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fido.demo.controller.pojo.registration.options.RegOptions.PubKeyCredParam;
+
 
 @Component
 public class RpUtils {
@@ -28,9 +29,10 @@ public class RpUtils {
         List<PubKeyCredParam> pubKeyCredParam = new ArrayList<PubKeyCredParam>();
 
         for(int i=0; i<tokens.length; i++) {
-            PubKeyCredParam p = new PubKeyCredParam();
-            p.setType("public-key");
-            p.setAlg(Integer.parseInt(tokens[i]));
+            PubKeyCredParam p = PubKeyCredParam.builder()
+            .type("public-key")
+            .alg(Integer.parseInt(tokens[i]))
+            .build();
             pubKeyCredParam.add(p);
         }
 

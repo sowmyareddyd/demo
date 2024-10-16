@@ -108,11 +108,11 @@ public class CredUtils {
         // id, user_id, rp_id, public_key(UUID), sign_count, transports, attestation_format, authenticator_credential_id
         //id is auto generated
 
-        // rp_id
-        String rpId = session.getRp().getId();
+        // rp_id : note this is Db id
+        BigInteger rpId = session.getRpDbId();
 
         // user_id
-        String userId = session.getUser().getId();
+        BigInteger userId = session.getUserDbId();
 
         // public_key
         byte[] publicKey = this.getPubKey(request).getBytes();
@@ -127,14 +127,12 @@ public class CredUtils {
         byte[] authneticatorCredentialId = registrationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData().getCredentialId(); //ToDo : avoid byte to string conversion ?
 
         CredentialEntity credentialEntity = CredentialEntity.builder()
-                //.rpId(Integer.valueOf(rpId))                              /* Column : rp_id */
-                .rpId(2)                                                    /* Column : rp_id */
-                //.userId(Integer.valueOf(userId))                            /* Column : user_id */
-                .userId(1)                                                  /* Column : user_id */
-                .publicKey(publicKey)                                       /* Column : public_key */
-                .sign_count(signCount)                                      /* Column : sign_count */
-                .attestationFormat(attestationFormat)                       /* Column : attestation_format */
-                .authenticatorCredentialId(authneticatorCredentialId)
+                .rpId(rpId)                                                      /* Column : rp_id */
+                .userId(userId)                                                  /* Column : user_id */
+                .publicKey(publicKey)                                            /* Column : public_key */
+                .sign_count(signCount)                                           /* Column : sign_count */
+                .attestationFormat(attestationFormat)                            /* Column : attestation_format */
+                .authenticatorCredentialId(authneticatorCredentialId)            /* Column : authenticator_credential_id */
                 .build();
 
         return  credentialEntity;

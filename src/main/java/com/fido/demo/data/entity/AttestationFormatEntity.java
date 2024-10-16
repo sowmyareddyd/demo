@@ -5,8 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,13 +17,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "ATTESTATION_FORMATS")
-//@Data // Generates getters, setters, toString, etc. (Requires Lombok)
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttestationFormatEntity {
     @Id
     @Column(name = "id")
-    private Long id;
+    private BigInteger id;
 
     @Column(name = "formate_name")
     private String format;

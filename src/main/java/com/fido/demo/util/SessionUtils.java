@@ -42,7 +42,7 @@ public class SessionUtils {
 
         User user = User.builder()
         .displayName(userEntity.getDisplayName())
-        .id(Integer.toString(userEntity.getId()))
+        .id(userEntity.getUserId())
         .build();
 
         long timeout = rpUtils.getTimeout(rpEntity.getConfigs());

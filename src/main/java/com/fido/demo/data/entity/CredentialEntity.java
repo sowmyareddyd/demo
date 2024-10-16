@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,13 +25,13 @@ public class CredentialEntity {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cred_sequence_generator")
     @SequenceGenerator(name = "cred_sequence_generator", sequenceName = "credentials_id_seq", allocationSize = 1)
-    private int id;
+    private BigInteger id;
 
     @Column(name = "user_id")
-    private int userId;
+    private BigInteger userId;
 
     @Column(name = "rp_id")
-    private int rpId;
+    private BigInteger rpId;
 
     @Column(name = "authenticator_credential_id")
     private byte[] authenticatorCredentialId;

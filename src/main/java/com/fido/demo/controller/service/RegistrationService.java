@@ -3,12 +3,15 @@ package com.fido.demo.controller.service;
 import com.fido.demo.controller.pojo.registration.options.AuthenticatorSelection;
 import com.fido.demo.controller.pojo.registration.options.RegOptions;
 import com.fido.demo.controller.pojo.registration.RegRequest;
+import com.fido.demo.controller.pojo.PubKeyCredParam;
 import com.fido.demo.controller.service.pojo.SessionState;
 import com.fido.demo.data.entity.AuthenticatorEntity;
 import com.fido.demo.data.entity.CredentialEntity;
 import com.fido.demo.data.entity.RelyingPartyEntity;
+import com.fido.demo.data.entity.UserEntity;
 import com.fido.demo.data.redis.RedisService;
 import com.fido.demo.data.repository.RPRepository;
+import com.fido.demo.data.repository.UserRepository;
 import com.fido.demo.data.repository.AuthenticatorRepository;
 import com.fido.demo.data.repository.CredentialRepository;
 import com.fido.demo.util.CredUtils;
@@ -22,12 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-import static com.fido.demo.controller.pojo.registration.options.RegOptions.PubKeyCredParam;
 
 @Service("registrationService")
 public class RegistrationService {
@@ -40,6 +43,9 @@ public class RegistrationService {
 
     @Autowired
     CredentialRepository credRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     AuthenticatorRepository authenticatorRepository;
@@ -57,26 +63,36 @@ public class RegistrationService {
         //session_id : secure random string
         String sessionId = cryptoUtil.generateSecureRandomString(32);
 
-        RelyingPartyEntity relyingPartyEntity = rpRepository.findByRpId(request.getRp().getId());
-        if(relyingPartyEntity == null){ //ToDo: Move all the validations to validators
+        RelyingPartyEntity rpEntity = rpRepository.findByRpId(request.getRp().getId());
+        if(rpEntity == null){ //ToDo: Move all the validations to validators
             throw new ResourceNotFoundException("RP not found");
         }
 
-        //ToDo: dont return the value configured for RP, match it with rp values or fail if config and incoming value mismatch
-        AuthenticatorSelection authenticatorSelection = rpUtils.getAuthenticatorSelection(relyingPartyEntity.getConfigs());
-        String attestation = rpUtils.getAttestation(relyingPartyEntity.getConfigs());
 
-        List<PubKeyCredParam> pubKeyCredParam = rpUtils.getPubKeyCredParam(relyingPartyEntity.getConfigs());
-        long timeout = rpUtils.getTimeout(relyingPartyEntity.getConfigs());
+        byte[] userIdBytea =Base64.getDecoder().decode(request.getUser().getId());
+        String userId = new String(userIdBytea, StandardCharsets.UTF_8);
+        System.err.println("-----------------------");
+        System.err.println(userId);
+        System.err.println("-----------------------");
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+
+        //ToDo: dont return the value configured for RP, match it with rp values or fail if config and incoming value mismatch
+        AuthenticatorSelection authenticatorSelection = rpUtils.getAuthenticatorSelection(rpEntity.getConfigs());
+        String attestation = rpUtils.getAttestation(rpEntity.getConfigs());
+
+        List<PubKeyCredParam> pubKeyCredParam = rpUtils.getPubKeyCredParam(rpEntity.getConfigs());
+        long timeout = rpUtils.getTimeout(rpEntity.getConfigs());
 
         String challenge = cryptoUtil.generateSecureRandomString(32);// challenge
         String challengeBase64 = Base64.getEncoder().encodeToString(challenge.getBytes());
         SessionState state = SessionState.builder() // ToDo : instead of saving the incoming data without validation, validate and persist
                 .sessionId(sessionId)
                 .rp(request.getRp())
-                .rpDbId(relyingPartyEntity.getId())
+                .rpDbId(rpEntity.getId())
                 .challenge(challengeBase64)
                 .user(request.getUser())
+                .userDbId(userEntity.getId())
                 .authenticatorSelection(request.getAuthenticatorSelection())
                 .timeout(timeout)
                 .build();
@@ -85,7 +101,7 @@ public class RegistrationService {
 
         RegOptions response = RegOptions.builder() // build the response
                 .rp(request.getRp())                                                   /* relying party*/
-                .user(request.getUser())                                               /* user */
+                .user(request.getUser())                                               /* user (ToDo : Validate the user) */
                 .authenticatorSelection(authenticatorSelection)                        /* authenticator selection */
                 .attestation(attestation)                                              /* attestation */
                 .challenge(challengeBase64)                                            /* challenge */

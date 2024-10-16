@@ -2,23 +2,28 @@ package com.fido.demo.data.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.sql.Time;
 import java.util.List;
 
+
 @Entity
 @Table(name = "RELYING_PARTIES")
-//@Data
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class RelyingPartyEntity {
 
     @Id
     @Column(name = "id")
-    private int id;
+    private BigInteger id;
 
-    @Column(name = "rp_id")
+    @Column(name = "external_id", unique = true)
     private String rpId;
 
     @Column(name = "name")
@@ -43,76 +48,4 @@ public class RelyingPartyEntity {
     @OneToMany(fetch = FetchType.LAZY)
     private List<RelyingPartyConfigEntity> configs;
 
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getRpId() {
-        return rpId;
-    }
-
-    public void setRpId(String rpId) {
-        this.rpId = rpId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Time getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Time createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Time getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Time updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public List<RelyingPartyConfigEntity> getConfigs() {
-        return configs;
-    }
-
-    public void setConfigs(List<RelyingPartyConfigEntity> configs) {
-        this.configs = configs;
-    }
 }

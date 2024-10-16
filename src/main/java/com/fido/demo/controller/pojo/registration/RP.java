@@ -3,44 +3,26 @@ package com.fido.demo.controller.pojo.registration;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RP {
     @JsonProperty("name")
     public String name;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     @JsonProperty("icon")
     public String icon;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("id")
     public String id;
 
     @JsonProperty("origin")
     public String origin;
 
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 }

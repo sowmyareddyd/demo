@@ -1,13 +1,14 @@
 package com.fido.demo.data.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.util.UUID;
 import java.util.List;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,7 +27,7 @@ public class AuthenticatorEntity {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authenticator_sequence_generator")
     @SequenceGenerator(name = "authenticator_sequence_generator", sequenceName = "authenticators_id_seq", allocationSize = 1)
-    private int id;
+    private BigInteger id;
 
     @Column(name = "aaguid")
     private UUID aaguid;

@@ -1,5 +1,7 @@
 package com.fido.demo.controller.service.pojo;
 
+import java.math.BigInteger;
+
 import com.fido.demo.controller.pojo.registration.RP;
 import com.fido.demo.controller.pojo.registration.options.AuthenticatorSelection;
 import com.fido.demo.controller.pojo.registration.User;
@@ -19,33 +21,12 @@ public class SessionState {
 
     private String challenge;
 
-    private int rpDbId;
+    private BigInteger rpDbId;
+
+    private BigInteger userDbId;
 
     private AuthenticatorSelection authenticatorSelection;
 
     private long timeout;
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getChallenge() {
-        return challenge;
-    }
-
-    public void setChallenge(String challenge) {
-        this.challenge = challenge;
-    }
 }
