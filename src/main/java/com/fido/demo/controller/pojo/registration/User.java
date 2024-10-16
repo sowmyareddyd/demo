@@ -2,9 +2,12 @@ package com.fido.demo.controller.pojo.registration;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class User {
     @JsonProperty("name")
     public String name;
@@ -15,9 +18,6 @@ public class User {
     public String id;
     @JsonProperty("displayName")
     public String displayName;
-
-    public User() {
-    }
 
     public String getName() {
         return name;

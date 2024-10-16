@@ -2,7 +2,6 @@ package com.fido.demo.controller.api;
 
 import com.fido.demo.controller.pojo.registration.options.RegOptions;
 import com.fido.demo.controller.pojo.registration.RegRequest;
-import com.fido.demo.controller.pojo.registration.RegResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

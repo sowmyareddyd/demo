@@ -1,5 +1,6 @@
 package com.fido.demo.util;
 
+import com.fido.demo.controller.pojo.authentication.AuthenticationOptionsResponse;
 import com.fido.demo.controller.pojo.registration.RegRequest;
 import com.fido.demo.controller.pojo.registration.RegResponse;
 import com.fido.demo.controller.service.pojo.SessionState;
@@ -25,15 +26,51 @@ import java.math.BigInteger;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.UUID;
-import java.util.ArrayList;
 import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 @Component
 public class CredUtils {
 
+    // ToDO : change the cred argument to list
+    public AuthenticationOptionsResponse getAuthnOptionsResponse(CredentialEntity credentialEntity, SessionState state){
+        
+        // challenge
+        String challenge = state.getChallenge();
+
+        // timeout
+        long timeout = state.getTimeout();
+
+        //rpId
+        String rpId = state.getRp().getId();
+
+        // userVerification : ToDO change it to read from state
+        String userVerification = "preferred";
+
+        // sessionid
+        String sessionId = state.getSessionId();
+
+        Pair<String, String> creds = Pair.of("public-key", new String(credentialEntity.getAuthenticatorCredentialId()) );
+        List<Pair<String, String>> allowedCreds = new ArrayList();
+        allowedCreds.add(creds);
+
+        AuthenticationOptionsResponse response = AuthenticationOptionsResponse.builder()
+        .challenge(challenge)
+        .timeout(timeout)
+        .rpId(rpId)
+        .allowedCreds(allowedCreds)
+        .userVerification(userVerification)
+        //.isUserVerification(userVerification)
+        .sessionId(sessionId)
+        .build();
+
+        return response;
+
+    }
 
     public RegRequest getRegistrationResponse(CredentialEntity credEntity){
         // aaguid
