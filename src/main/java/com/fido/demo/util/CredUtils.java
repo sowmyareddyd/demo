@@ -99,8 +99,6 @@ public class CredUtils {
                 .authenticatorCredentialId(authneticatorCredentialId)
                 .build();
 
-
-
         return  credentialEntity;
     }
 

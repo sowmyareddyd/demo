@@ -19,6 +19,8 @@ public class AuthenticatorEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authenticator_sequence_generator")
+    @SequenceGenerator(name = "authenticator_sequence_generator", sequenceName = "authenticators_id_seq", allocationSize = 1)
     private int id;
 
     @Column(name = "aaguid")

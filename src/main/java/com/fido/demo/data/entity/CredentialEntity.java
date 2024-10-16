@@ -19,6 +19,8 @@ public class CredentialEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cred_sequence_generator")
+    @SequenceGenerator(name = "cred_sequence_generator", sequenceName = "credentials_id_seq", allocationSize = 1)
     private int id;
 
     @Column(name = "user_id")
