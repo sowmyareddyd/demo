@@ -9,11 +9,15 @@ import com.fido.demo.data.entity.CredentialEntity;
 import com.fido.demo.data.entity.RelyingPartyEntity;
 import com.fido.demo.data.redis.RedisService;
 import com.fido.demo.data.repository.RPRepository;
+import com.fido.demo.data.repository.AuthenticatorRepository;
 import com.fido.demo.data.repository.CredentialRepository;
 import com.fido.demo.util.CredUtils;
 import com.fido.demo.util.CryptoUtil;
 import com.fido.demo.util.RpUtils;
 import com.webauthn4j.data.RegistrationData;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -38,6 +42,9 @@ public class RegistrationService {
     CredentialRepository credRepository;
 
     @Autowired
+    AuthenticatorRepository authenticatorRepository;
+
+    @Autowired
     private RpUtils rpUtils;
 
     @Autowired
@@ -51,12 +58,14 @@ public class RegistrationService {
         String sessionId = cryptoUtil.generateSecureRandomString(32);
 
         RelyingPartyEntity relyingPartyEntity = rpRepository.findByRpId(request.getRp().getId());
-        if(relyingPartyEntity == null){
+        if(relyingPartyEntity == null){ //ToDo: Move all the validations to validators
             throw new ResourceNotFoundException("RP not found");
         }
 
+        //ToDo: dont return the value configured for RP, match it with rp values or fail if config and incoming value mismatch
         AuthenticatorSelection authenticatorSelection = rpUtils.getAuthenticatorSelection(relyingPartyEntity.getConfigs());
         String attestation = rpUtils.getAttestation(relyingPartyEntity.getConfigs());
+
         List<PubKeyCredParam> pubKeyCredParam = rpUtils.getPubKeyCredParam(relyingPartyEntity.getConfigs());
         long timeout = rpUtils.getTimeout(relyingPartyEntity.getConfigs());
 
@@ -72,7 +81,7 @@ public class RegistrationService {
                 .timeout(timeout)
                 .build();
 
-        redisService.save(sessionId, state); // save the state for subsequent call
+        redisService.save(sessionId, state); // save the state for subsequent calls
 
         RegOptions response = RegOptions.builder() // build the response
                 .rp(request.getRp())                                                   /* relying party*/
@@ -99,11 +108,12 @@ public class RegistrationService {
 
         CredentialEntity credentialEntity = credUtils.getCredentialEntity(request, session, registrationData);
         AuthenticatorEntity authenticatorEntity = credUtils.getAuthenticatorEntity(request, registrationData);
-        credentialEntity.setAuthenticator(authenticatorEntity);
+
+        AuthenticatorEntity savedAuthnEntity = authenticatorRepository.save(authenticatorEntity);
+        credentialEntity.setAuthenticator(savedAuthnEntity);
 
         // persist the credentials
         CredentialEntity savedCreds = credRepository.save(credentialEntity);
-
 
         // construct the response and return
         RegRequest response = credUtils.getRegistrationResponse(savedCreds);
@@ -111,7 +121,15 @@ public class RegistrationService {
         return response;
     }
 
+    @Transactional
+    private CredentialEntity saveCredentialEntity(CredentialEntity credentialEntity){
+      CredentialEntity savedCred = credRepository.save(credentialEntity);
+      return savedCred;
+    }
+
 }
+
+
 // Sample incoming request
 /*
 {

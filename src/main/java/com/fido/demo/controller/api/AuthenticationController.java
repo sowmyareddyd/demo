@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/fido2")
 public interface AuthenticationController {
-    
+
     // Get challenge options for registration
     @PostMapping("/authentication/options")
     public ResponseEntity<AuthenticationOptionsResponse> getRegOptions(AuthenticationOptionsRequest request);

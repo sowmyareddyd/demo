@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.UUID;
 import java.util.ArrayList;
+import org.springframework.util.StringUtils;
 
 @Component
 public class CredUtils {
@@ -44,7 +45,7 @@ public class CredUtils {
         String attestationType = credEntity.getAttestationFormat();
 
         // authenticatorTransports
-        String authenticatorTransports = credEntity.getAuthenticator().getTransports();
+        String authenticatorTransports = StringUtils.collectionToDelimitedString(credEntity.getAuthenticator().getTransports(), ",");
 
         //userVerified: ToDo: update this code
         boolean userVerified = true;
@@ -105,7 +106,7 @@ public class CredUtils {
 
     public AuthenticatorEntity getAuthenticatorEntity(RegRequest request, RegistrationData registrationData){
         // transports
-        String transports = registrationData.getTransports().stream().map(transport -> transport.getValue()).collect(Collectors.joining(",")); // ToDo : handle multiple transports
+        List<String> transports = registrationData.getTransports().stream().map(transport -> transport.getValue()).collect(Collectors.toList()); // ToDo : handle multiple transports
         AAGUID aauid = registrationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData().getAaguid();
         AuthenticatorEntity authenticatorEntity = AuthenticatorEntity.builder()
                 .aaguid(aauid.getValue())

@@ -6,8 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "CREDENTIALS")
@@ -41,104 +44,20 @@ public class CredentialEntity {
     @Column(name = "attestation_format")
     private String attestationFormat;
 
-    @JoinColumn(name = "credential_id")
+    //@JoinColumn(name = "credential_id")
     @OneToMany(fetch = FetchType.LAZY)
     private List<CredentialConfigEntity> configs;
 
-    @OneToOne(mappedBy= "credential" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private AuthenticatorEntity authenticator;
-
     @Column(name = "created_at")
-    private Time createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private Time updatedAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-    public int getId() {
-        return id;
-    }
+    @JoinColumn(name = "authenticator_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private AuthenticatorEntity authenticator;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getRpId() {
-        return rpId;
-    }
-
-    public void setRpId(int rpId) {
-        this.rpId = rpId;
-    }
-
-    public byte[] getAuthenticatorCredentialId() {
-        return authenticatorCredentialId;
-    }
-
-    public void setAuthenticatorCredentialId(byte[] authenticatorCredentialId) {
-        this.authenticatorCredentialId = authenticatorCredentialId;
-    }
-
-    public byte[] getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(byte[] publicKey) {
-        this.publicKey = publicKey;
-    }
-
-    public long getSign_count() {
-        return sign_count;
-    }
-
-    public void setSign_count(long sign_count) {
-        this.sign_count = sign_count;
-    }
-
-    public String getAttestationFormat() {
-        return attestationFormat;
-    }
-
-    public void setAttestationFormat(String attestationFormat) {
-        this.attestationFormat = attestationFormat;
-    }
-
-    public List<CredentialConfigEntity> getConfigs() {
-        return configs;
-    }
-
-    public void setConfigs(List<CredentialConfigEntity> configs) {
-        this.configs = configs;
-    }
-
-    public AuthenticatorEntity getAuthenticator() {
-        return authenticator;
-    }
-
-    public void setAuthenticator(AuthenticatorEntity authenticator) {
-        this.authenticator = authenticator;
-    }
-
-    public Time getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Time createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Time getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Time updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

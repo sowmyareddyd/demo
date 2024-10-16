@@ -6,8 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
 
-import java.sql.Time;
 import java.util.UUID;
+import java.util.List;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 
 @Entity
 @Table(name = "AUTHENTICATORS")
@@ -30,7 +35,7 @@ public class AuthenticatorEntity {
     private String deviceType;
 
     @Column(name = "transports")
-    private String transports;
+    private List<String> transports;
 
     @Column(name = "manufacturer")
     private String manufacturer;
@@ -42,85 +47,17 @@ public class AuthenticatorEntity {
     private String firmwareVersion;
 
     @Column(name = "created_at")
-    private Time createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private Time updatedAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 
-    @JoinColumn(name = "credential_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private CredentialEntity credential;
+    // @JoinColumn(name = "credential_id", nullable = false)
+    // @OneToMany(fetch = FetchType.LAZY)
+    // private CredentialEntity credential;
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public UUID getAaguid() {
-        return aaguid;
-    }
-
-    public void setAaguid(UUID aaguid) {
-        this.aaguid = aaguid;
-    }
-
-    public String getDeviceType() {
-        return deviceType;
-    }
-
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
-    }
-
-    public String getTransports() {
-        return transports;
-    }
-
-    public void setTransports(String transports) {
-        this.transports = transports;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getFirmwareVersion() {
-        return firmwareVersion;
-    }
-
-    public void setFirmwareVersion(String firmwareVersion) {
-        this.firmwareVersion = firmwareVersion;
-    }
-
-    public Time getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Time createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Time getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Time updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

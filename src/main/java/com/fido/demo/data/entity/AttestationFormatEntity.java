@@ -7,7 +7,10 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
+import java.time.LocalTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "ATTESTATION_FORMATS")
@@ -26,48 +29,11 @@ public class AttestationFormatEntity {
     private String description;
 
     @Column(name = "created_at")
-    private Time createdAt;
+    @CreationTimestamp
+    private LocalTime createdAt;
 
     @Column(name = "updated_at")
-    private Time updatedAt;
+    @UpdateTimestamp
+    private LocalTime updatedAt;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Time getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Time createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Time getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Time updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }
