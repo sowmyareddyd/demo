@@ -17,6 +17,8 @@ import com.fido.demo.controller.service.pojo.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service("authenticationService")
 public class AuthenticationService {
     @Autowired
@@ -49,9 +51,9 @@ public class AuthenticationService {
 
 
         // fetch credentials for the user
-        CredentialEntity credEntity = credentialRepository.findByRpIdAndUserId(2, 1);
+        List<CredentialEntity> registeredCreds = credentialRepository.findByRpIdAndUserId(rpEntity.getId(), userEntity.getId());
 
-        AuthenticationOptionsResponse response = credUtils.getAuthnOptionsResponse(credEntity, state);
+        AuthenticationOptionsResponse response = credUtils.getAuthnOptionsResponse(registeredCreds, state);
         return response;
     }
 

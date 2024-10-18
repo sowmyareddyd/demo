@@ -27,8 +27,10 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.util.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,8 +39,8 @@ import org.apache.commons.lang3.tuple.Pair;
 public class CredUtils {
 
     // ToDO : change the cred argument to list
-    public AuthenticationOptionsResponse getAuthnOptionsResponse(CredentialEntity credentialEntity, SessionState state){
-        
+    public AuthenticationOptionsResponse getAuthnOptionsResponse(List<CredentialEntity> registeredCreds, SessionState state){
+
         // challenge
         String challenge = state.getChallenge();
 
@@ -54,9 +56,14 @@ public class CredUtils {
         // sessionid
         String sessionId = state.getSessionId();
 
-        Pair<String, String> creds = Pair.of("public-key", new String(credentialEntity.getAuthenticatorCredentialId()) );
-        List<Pair<String, String>> allowedCreds = new ArrayList();
-        allowedCreds.add(creds);
+
+        List<Map<String,String>> allowedCreds =registeredCreds.stream().map( (item) -> {
+            Map<String, String> entry = new HashMap<String, String>();
+            entry.put("type", "public-key");
+            entry.put("id", new String(item.getAuthenticatorCredentialId()));
+            return entry;
+        }).collect(Collectors.toList());
+
 
         AuthenticationOptionsResponse response = AuthenticationOptionsResponse.builder()
         .challenge(challenge)

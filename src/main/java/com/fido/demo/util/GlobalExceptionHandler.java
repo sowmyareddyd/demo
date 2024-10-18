@@ -29,7 +29,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // Handle specific exceptions
     @ExceptionHandler(ResourceNotFoundException.class)
     public final ResponseEntity<ApiError> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-        
+
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         ApiError error = new ApiError(HttpStatus.NOT_FOUND, "Resource Not Found", details);
@@ -60,6 +60,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.add(error.getField() + ": " + error.getDefaultMessage());
         }
+
+        System.err.println("-----------------------");
+        System.err.println("it is also coming here....");
+        System.err.println("-----------------------");
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Validation Failed", errors);
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }

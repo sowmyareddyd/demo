@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -27,7 +28,8 @@ public class AuthenticationOptionsResponse {
     private String sessionId;
 
     @JsonProperty("allowCredentials")
-    private List<Pair<String, String>> allowedCreds;
+    private List<Map<String,String>> allowedCreds;
+
 
 }
 
