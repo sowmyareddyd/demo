@@ -2,8 +2,8 @@ package com.fido.demo.controller.api;
 
 import com.fido.demo.controller.pojo.authentication.AuthenticationOptionsRequest;
 import com.fido.demo.controller.pojo.authentication.AuthenticationOptionsResponse;
-import com.fido.demo.controller.pojo.authentication.AuthenticationRequest;
-import com.fido.demo.controller.pojo.authentication.AuthenticationResponse;
+import com.fido.demo.controller.pojo.authentication.AuthnRequest;
+import com.fido.demo.controller.pojo.authentication.AuthnResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,5 +19,5 @@ public interface AuthenticationController {
     public ResponseEntity<AuthenticationOptionsResponse> getRegOptions(@RequestBody AuthenticationOptionsRequest request);
 
     @PostMapping("/authentication")
-    public ResponseEntity<AuthenticationResponse> createRegistration(@RequestBody AuthenticationRequest request);
+    public ResponseEntity<AuthnResponse> createRegistration(@RequestBody AuthnRequest request);
 }

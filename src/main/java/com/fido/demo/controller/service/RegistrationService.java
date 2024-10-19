@@ -19,8 +19,6 @@ import com.fido.demo.util.CryptoUtil;
 import com.fido.demo.util.RpUtils;
 import com.webauthn4j.data.RegistrationData;
 
-import jakarta.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -29,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.UUID;
 
 
 @Service("registrationService")
@@ -68,12 +65,8 @@ public class RegistrationService {
             throw new ResourceNotFoundException("RP not found");
         }
 
-
         byte[] userIdBytea =Base64.getDecoder().decode(request.getUser().getId());
         String userId = new String(userIdBytea, StandardCharsets.UTF_8);
-        System.err.println("-----------------------");
-        System.err.println(userId);
-        System.err.println("-----------------------");
         UserEntity userEntity = userRepository.findByUserId(userId);
 
 
@@ -118,9 +111,8 @@ public class RegistrationService {
         // fetch the session State
         SessionState session = (SessionState) redisService.find(request.getSessionId());
 
-
         // validate session and extract registrationData
-        RegistrationData registrationData = credUtils.validateAndGetRegData(request, session);
+        RegistrationData registrationData = credUtils.validateAndGetRegData(request.getServerPublicKeyCredential(), session);
 
         CredentialEntity credentialEntity = credUtils.getCredentialEntity(request, session, registrationData);
         AuthenticatorEntity authenticatorEntity = credUtils.getAuthenticatorEntity(request, registrationData);
@@ -135,12 +127,6 @@ public class RegistrationService {
         RegRequest response = credUtils.getRegistrationResponse(savedCreds);
 
         return response;
-    }
-
-    @Transactional
-    private CredentialEntity saveCredentialEntity(CredentialEntity credentialEntity){
-      CredentialEntity savedCred = credRepository.save(credentialEntity);
-      return savedCred;
     }
 
 }

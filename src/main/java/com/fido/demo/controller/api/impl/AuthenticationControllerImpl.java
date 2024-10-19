@@ -3,8 +3,8 @@ package com.fido.demo.controller.api.impl;
 import com.fido.demo.controller.api.AuthenticationController;
 import com.fido.demo.controller.pojo.authentication.AuthenticationOptionsRequest;
 import com.fido.demo.controller.pojo.authentication.AuthenticationOptionsResponse;
-import com.fido.demo.controller.pojo.authentication.AuthenticationRequest;
-import com.fido.demo.controller.pojo.authentication.AuthenticationResponse;
+import com.fido.demo.controller.pojo.authentication.AuthnRequest;
+import com.fido.demo.controller.pojo.authentication.AuthnResponse;
 import com.fido.demo.controller.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +23,8 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     }
 
     @Override
-    public ResponseEntity<AuthenticationResponse> createRegistration(AuthenticationRequest request) {
-        AuthenticationResponse response = authenticationService.authenticate(request);
+    public ResponseEntity<AuthnResponse> createRegistration(AuthnRequest request) {
+        AuthnResponse response = authenticationService.authenticate(request);
         return ResponseEntity.ok(response);
     }
 }

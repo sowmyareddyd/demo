@@ -37,6 +37,7 @@ async function triggerPasskeyAuthentication(authOptions) {
             }
         };
 
+        console.log('Credential created:', JSON.stringify(credential));
         // Post credential to your RP server for validation
         return credential;
     } catch (error) {
