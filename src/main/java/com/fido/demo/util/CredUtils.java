@@ -16,6 +16,7 @@ import com.webauthn4j.data.*;
 import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.validator.exception.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +44,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 @Component
 public class CredUtils {
+
+    @Autowired
+    JSONUtils jsonUtils;
+
     private final CredentialRepository credentialRepository;
 
     public CredUtils(CredentialRepository credentialRepository) {
@@ -295,6 +300,13 @@ public class CredUtils {
         // transports
         List<String> transports = registrationData.getTransports().stream().map(transport -> transport.getValue()).collect(Collectors.toList()); // ToDo : handle multiple transports
         AAGUID aauid = registrationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData().getAaguid();
+
+        byte[] credentialId = request.getServerPublicKeyCredential().getId().getBytes();
+
+        AttestationObject attestationObject = registrationData.getAttestationObject();
+        AttestedCredentialData attestedCredentialData = attestationObject.getAuthenticatorData().getAttestedCredentialData();
+        String attestedCredJSON = jsonUtils.toJSONString(attestedCredentialData);
+
         AuthenticatorEntity authenticatorEntity = AuthenticatorEntity.builder()
                 .aaguid(aauid.getValue())
                 .transports(transports)
