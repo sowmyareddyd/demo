@@ -38,6 +38,9 @@ public class ServerPublicKeyCredential {
         @JsonProperty("transports")
         private List<String> transports;
 
+        @JsonProperty
+        private String userHandle;
+
         @JsonProperty("signature")
         private String signature;
     }

@@ -17,4 +17,15 @@ public class JSONUtils<T> {
         }
         return ret;
     }
+
+    <T> T toObject(String jsonString, Class<T> clazz) {
+        T ret = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            ret = mapper.readValue(jsonString, clazz);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ret;
+    }
 }

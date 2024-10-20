@@ -45,8 +45,8 @@ public class CredentialEntity {
     @Column(name = "attestation_format")
     private String attestationFormat;
 
-    //@JoinColumn(name = "credential_id")
-    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "credential_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CredentialConfigEntity> configs;
 
     @Column(name = "created_at")
