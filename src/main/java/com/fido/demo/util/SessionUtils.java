@@ -36,8 +36,10 @@ public class SessionUtils {
         String challenge = cryptoUtil.generateSecureRandomString(32);
         String challengeBase64 = Base64.getEncoder().encodeToString(challenge.getBytes());
 
+        // ToDO: build RP from rpEntity not from incoming request
         RP rp = RP.builder()
                 .id(request.getRpId())
+                .origin(rpEntity.getOrigin())
                 .build();
 
         User user = User.builder()

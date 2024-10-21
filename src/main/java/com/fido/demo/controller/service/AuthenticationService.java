@@ -15,6 +15,7 @@ import com.fido.demo.util.CredUtils;
 import com.fido.demo.util.SessionUtils;
 import com.fido.demo.controller.service.pojo.SessionState;
 
+import com.webauthn4j.data.AuthenticationData;
 import com.webauthn4j.data.AuthenticationParameters;
 import com.webauthn4j.data.RegistrationData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +68,7 @@ public class AuthenticationService {
         SessionState session = (SessionState) redisService.find(request.getSessionId());
 
         // validate the challenge & signature sent by client using the registered public-key
-        RegistrationData registrationData = credUtils.validateAndGetRegData(request.getServerPublicKeyCredential(), session);
-
-
-
+        AuthenticationData authenticationData = credUtils.validateAndGetAuthnData(request.getServerPublicKeyCredential(), session);
 
 
         return null;

@@ -10,6 +10,7 @@ import com.fido.demo.data.entity.CredentialConfigEntity;
 import com.fido.demo.data.entity.CredentialEntity;
 import com.fido.demo.data.entity.AuthenticatorEntity;
 import com.fido.demo.data.repository.CredentialRepository;
+import com.webauthn4j.WebAuthnAuthenticationManager;
 import com.webauthn4j.WebAuthnRegistrationManager;
 import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.authenticator.AuthenticatorImpl;
@@ -41,6 +42,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.UUID;
+
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -178,9 +181,8 @@ public class CredUtils {
         return response;
     }
 
-    public RegistrationData validateAndGetAuthnData(ServerPublicKeyCredential publicKeyCredential, SessionState sessionState){
+    public AuthenticationData validateAndGetAuthnData(ServerPublicKeyCredential publicKeyCredential, SessionState sessionState){
 
-        WebAuthnRegistrationManager webAuthnManager = WebAuthnRegistrationManager.createNonStrictWebAuthnRegistrationManager();
         ServerPublicKeyCredential.Response clientResponse = publicKeyCredential.getResponse();
 
         // client properties
@@ -191,7 +193,7 @@ public class CredUtils {
         byte[] clientDataJSON = Base64.getDecoder().decode(clientResponse.getClientDataJSON()); /* set clientDataJSON */;
         String clientExtensionJSON = null;  /* set clientExtensionJSON */;
         byte[] signature = clientResponse.getSignature().getBytes();
-        Set<String> transports = new HashSet<String>(clientResponse.getTransports()); /* set transports */;
+        //Set<String> transports = CollectionUtils.isEmpty(clientResponse.getTransports()) ? null : new HashSet<String>(clientResponse.getTransports()); /* set transports: ToDO : handle empty transports */;
 
         // Server properties
         Origin origin = Origin.create(sessionState.getRp().getOrigin()) /* set origin */;
@@ -214,19 +216,8 @@ public class CredUtils {
                 signature
         );
 
-        List<CredentialEntity> savedCred = credentialRepository.findByRpIdAndUserId(sessionState.getRpDbId(), sessionState.getUserDbId());
-        // filter if the incoming cred id is present
-        CredentialEntity credEntity = savedCred.stream().filter(item -> {
-            String id = new String(item.getAuthenticatorCredentialId());
-            return id.compareTo(publicKeyCredential.getId()) == 0;
-        }).findFirst().orElseGet(null);
 
-        if(credEntity == null){
-            throw new ResourceNotFoundException("Credential not found");
-        }
-
-
-        Authenticator authenticator = this.getWebAuthn4jAuthenticator(credEntity);
+        Authenticator authenticator = this.getWebAuthn4jAuthenticator(publicKeyCredential, sessionState);
         AuthenticationParameters authnParams = new AuthenticationParameters(
                 serverProperty,
                 authenticator,
@@ -234,13 +225,40 @@ public class CredUtils {
                 userVerificationRequired,
                 userPresenceRequired
         );
-        RegistrationParameters registrationParameters = new RegistrationParameters(serverProperty, userVerificationRequired, userPresenceRequired);
 
+        AuthenticationData authenticationData;
+        WebAuthnAuthenticationManager webAuthnManager = new WebAuthnAuthenticationManager();
 
-        return null;
+        try {
+            authenticationData = webAuthnManager.parse(authenticationRequest);
+        } catch (DataConversionException e) {
+            // If you would like to handle WebAuthn data structure parse error, please catch DataConversionException
+            throw new RuntimeException("Failed to parse authentication data", e);
+        }
+
+        AuthenticationData authnData = null;
+        try {
+               authnData = webAuthnManager.validate(authenticationData, authnParams);
+        } catch (ValidationException e) {
+            // If you would like to handle WebAuthn data validation error, please catch ValidationException
+            throw new RuntimeException("Failed to validate authentication data", e);
+        }
+
+        return authnData;
 
     }
-    private Authenticator getWebAuthn4jAuthenticator(CredentialEntity credentialEntity){
+    private Authenticator getWebAuthn4jAuthenticator(ServerPublicKeyCredential publicKeyCredential, SessionState sessionState){
+        List<CredentialEntity> savedCred = credentialRepository.findByRpIdAndUserId(sessionState.getRpDbId(), sessionState.getUserDbId());
+        // filter if the incoming cred id is present
+        CredentialEntity credentialEntity = savedCred.stream().filter(item -> {
+            String id = new String(item.getAuthenticatorCredentialId());
+            return id.compareTo(publicKeyCredential.getId()) == 0;
+        }).findFirst().orElseGet(null);
+
+        if(credentialEntity == null){
+            throw new ResourceNotFoundException("Credential not found");
+        }
+
         AttestationObject attestationObject = null;
 
         CredentialConfigEntity config = credentialEntity.getConfigs().get(0);
